@@ -16,7 +16,7 @@ const typeDefs = gql`
 type Subscription{
     columnAdded: Column
     cardAdded: Card
-    onColumnPositionChnage: Column
+    onColumnPositionChange: Column
     onCardPositionChange: Card
 }
 ${cardTypeDefs}
@@ -50,7 +50,7 @@ const SubscriptionResolvers = {
 const customResolvers = {
     Column: {
         cards(parents, args, cxt) {
-            return cxt.card.getCardBySectionId(parents._id);
+            return cxt.card.getCardByColumnId(parents._id);
        },
    },
 };
@@ -77,8 +77,7 @@ async function startServer() {
         }),
     });
     await apolloServer.start();
-    const httpServer = createServer(app);
-    server.installSubscriptionHandlers(httpServer);
+
     apolloServer.applyMiddleware({ app: app }); // This line of code let us to use graphql playgrould @ url/graphql
     await mongoose.connect('mongodb://localhost:27017/kanban',{  //This line of code helps establishing the connection to MongoDB
         useUnifiedTopology: true,

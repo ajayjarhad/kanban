@@ -5,7 +5,7 @@ module.exports = async (__, args, cxt) => {
         const column = await cxt.column.updatePosition(columnId, position);
         console.log("column", column)
         cxt.publisher.publish(cxt.SUBSCRIPTION_CONSTANTS.ON_COLUMN_POSITION_CHANGE, {
-            onColumnnPositionChange: columnn,
+            onColumnPositionChange: columnn,
         });
         return column;
     }

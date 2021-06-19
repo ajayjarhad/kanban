@@ -27,7 +27,7 @@ class Card{
         return card.save();
     }
     static getCardByColumnId(columnId) {
-        return this.find({ columnId }).sort('poisiton').exec();
+        return this.find({ columnId }).sort('position').exec();
     }
     static updatePos(cardId, position, columnId) {
         return this.findOneAndUpdate({
