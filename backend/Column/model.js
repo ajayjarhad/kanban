@@ -35,7 +35,7 @@ class Column {
         },
             {
                 $set: {
-                pos,
+                position,
             },
             },
             {

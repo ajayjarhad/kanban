@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 // import CardContainer from './Cards/CardsContainer';
 import { IoIosAdd } from "react-icons/io";
-import sortBy from "loadash/sortBy";
+import sortBy from "lodash/sortBy";
 import { useMutation, useSubscription, useQuery } from "@apollo/react-hooks";
 import gql from "graphql-tag";
 import positionCalculation from '../../utils/positionCalculation';
