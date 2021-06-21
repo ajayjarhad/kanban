@@ -65,7 +65,6 @@ const resolvers = merge(
 
 // Code that starts the server.
 async function startServer() {
-    const app = express();
     const apolloServer = new ApolloServer({
         typeDefs,
         resolvers,
@@ -77,13 +76,16 @@ async function startServer() {
         }),
     });
     await apolloServer.start();
-
+    
+    const app = express();
     apolloServer.applyMiddleware({ app: app }); // This line of code let us to use graphql playgrould @ url/graphql
+    const httpServer = createServer(app);
+    apolloServer.installSubscriptionHandlers(httpServer);
     await mongoose.connect('mongodb://localhost:27017/kanban',{  //This line of code helps establishing the connection to MongoDB
         useUnifiedTopology: true,
         useNewUrlParser: true,
     });
     console.log('Connection to mongose is successful')
-    app.listen(4000, () => console.log('The server is live on port 4000'));
+    httpServer.listen(4444, () => console.log('The server is live on port 4444'));
 }
 startServer();

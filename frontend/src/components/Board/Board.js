@@ -20,19 +20,7 @@ import {
     SubmitCardIcon,
 } from "./board.styles";
 
-const Board = () => {
-    const [isAddColumnInputActive, setAddColumnInputActive] = useState(false);
-    const [addColumnInputText, setAddColumnInputText] = useState("");
-    const [boards, setBoard] = useState([]);
-    const { loading, error, data } = useQuery(BOARD_QUERY);
-
-    const onAddColumnSubmit = () => {
-        if (addColumnInputText) {
-            
-        }
-    };
-
-    const BOARD_QUERY = gql`
+const BOARD_QUERY = gql`
   query {
     fetchColumns {
       id
@@ -95,11 +83,25 @@ subscription {
   }
 }
 `;
+
+const Board = () => {
+    const [isAddColumnInputActive, setAddColumnInputActive] = useState(false);
+    const [addColumnInputText, setAddColumnInputText] = useState("");
+    const [boards, setBoard] = useState([]);
+    const { loading, error, data } = useQuery(BOARD_QUERY);
+
+    const onAddColumnSubmit = () => {
+        if (addColumnInputText) {
+            
+        }
+    };
+
+ 
     
     const Board = () => {
         const [isAddColumnInputActive, setAddColumnInputActive] = useState(false);
   
-        const [addColumnInpuText, setAddColumnInputText] = useState("");
+        const [addColumnInputText, setAddColumnInputText] = useState("");
         const [boards, setBoards] = useState([]);
         const [AddColumn, { insertColumn }] = useMutation(ADD_COLUMN);
   
@@ -179,18 +181,21 @@ subscription {
         };
   
         const onAddColumnSubmit = () => {
-            if (addColumnInpuText) {
+            if (addColumnInputText) {
                 AddColumn({
                     variables: {
-                        title: addColumnInpuText,
-                        label: addColumnInpuText,
+                        title: addColumnInputText,
+                        label: addColumnInputText,
                         position:
                             boards && boards.length > 0
                                 ? boards[boards.length - 1].position + 16384
                                 : 16384,
                     },
                 });
-            }
+          }
+            else {
+              console.log('Error')
+          }
         };
 
     }
