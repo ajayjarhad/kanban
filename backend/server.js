@@ -1,68 +1,66 @@
-// Importing libraries
-const express = require('express');
-const { ApolloServer, gql } = require('apollo-server-express');
+const express = require("express");
+const { ApolloServer, gql } = require("apollo-server-express");
+const merge = require("lodash.merge");
 const mongoose = require("mongoose");
-const merge = require('lodash.merge');
 const { PubSub } = require("apollo-server");
 const { createServer } = require("http");
-const columnModel = require('./Column/model');
-const cardModel = require('./Card/model')
-const { columnResolvers, columnTypeDefs } = require('./Column')
-const { cardResolvers, cardTypeDefs } = require("./Card");
+
+const { cardResolvers, cardTypeDefs } = require("./card");
+const { sectionResolvers, sectionTypeDefs } = require("./section");
+
+const cardModel = require("./card/model");
+const sectionModel = require("./section/model");
 const SUBSCRIPTION_CONSTANTS = require("./subscriptionConstants");
 
-//Here I will write my graphQL queries.
 const typeDefs = gql`
-type Subscription{
-    columnAdded: Column
+  type Subscription {
+    sectionAdded: Section
     cardAdded: Card
-    onColumnPositionChange: Column
-    onCardPositionChange: Card
-}
-${cardTypeDefs}
-${columnTypeDefs}
+    onSectionPosChange: Section
+    onCardPosChange: Card
+  }
+
+  ${cardTypeDefs}
+  ${sectionTypeDefs}
 `;
 
 const pubsub = new PubSub();
 
-const SubscriptionResolvers = {
-    Subscription: {
-        columnAdded: {
-            subscribe: () =>
-                pubsub.asyncIterator([SUBSCRIPTION_CONSTANTS.COLUMN_ADDED]),
-        },
-        cardAdded: {
-            subscribe: () =>
-                pubsub.asyncIterator([SUBSCRIPTION_CONSTANTS.CARD_ADDED]),
-        },
-        onColumnPositionChange: {
-            subscribe: () =>
-                pubsub.asyncIterator([SUBSCRIPTION_CONSTANTS.ON_COLUMN_POSITION_CHANGE]),
-        },
-        onCardPositionChange: {
-            subscribe: () =>
-                pubsub.asyncIterator([ SUBSCRIPTION_CONSTANTS.ON_CARD_POSITION_CHANGE ])
-        },
+const SubscriptionsResolvers = {
+  Subscription: {
+    sectionAdded: {
+      subscribe: () =>
+        pubsub.asyncIterator([SUBSCRIPTION_CONSTANTS.SECTION_ADDED]),
     },
+    cardAdded: {
+      subscribe: () =>
+        pubsub.asyncIterator([SUBSCRIPTION_CONSTANTS.CARD_ADDED]),
+    },
+    onSectionPosChange: {
+      subscribe: () =>
+        pubsub.asyncIterator([SUBSCRIPTION_CONSTANTS.ON_SECTION_POS_CHANGE]),
+    },
+    onCardPosChange: {
+      subscribe: () =>
+        pubsub.asyncIterator([SUBSCRIPTION_CONSTANTS.ON_CARD_POS_CHANGE]),
+    },
+  },
 };
 
-//Here is code for the resolver.
 const customResolvers = {
-    Column: {
-        cards(parents, args, cxt) {
-            return cxt.card.getCardByColumnId(parents._id);
-       },
-   },
+  Section: {
+    cards(parent, args, cxt) {
+      return cxt.card.getCardBySectionId(parent._id);
+    },
+  },
 };
 
 const resolvers = merge(
-    columnResolvers,
-    cardResolvers,
-    customResolvers,
-    SubscriptionResolvers
-)
-
-
+  cardResolvers,
+  sectionResolvers,
+  customResolvers,
+  SubscriptionsResolvers
+);
 // Code that starts the server.
 async function startServer() {
     const apolloServer = new ApolloServer({
@@ -70,7 +68,7 @@ async function startServer() {
         resolvers,
         context: () => ({   // Using graphQL context.
             card: cardModel,
-            column: columnModel,
+            section: sectionModel,
             publisher: pubsub,
             SUBSCRIPTION_CONSTANTS: SUBSCRIPTION_CONSTANTS,
         }),

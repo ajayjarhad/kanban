@@ -1,7 +1,6 @@
 const insertCard = require("./insertCard");
-const updateCardPosition = require("./updateCardPosition");
-
+const updateCardPos = require("./updateCardPos");
 module.exports = {
-    insertCard,
-    updateCardPosition,
-}
+  insertCard,
+  updateCardPos,
+};

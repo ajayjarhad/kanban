@@ -1,16 +1,15 @@
-
 import React, { useEffect, useState } from "react";
 import Card from "../Card";
 import { Container, Draggable } from "react-smooth-dnd";
 import { IoIosAdd } from "react-icons/io";
 import { useMutation, useSubscription } from "@apollo/react-hooks";
 import gql from "graphql-tag";
-import positionCalculation from "../../../../utils/poitionCalculation";
+import PosCalculation from "../../utils/pos_calculation";
 import sortBy from "lodash/sortBy";
 
 import {
   Wrapper,
-  WrappedColumn,
+  WrappedSection,
   CardContainerHeader,
   ContainerContainerTitle,
   CardsContainer,
@@ -27,17 +26,17 @@ import {
 
 const ADD_CARD = gql`
   mutation InsertCard(
-    $columnId: ID!
+    $sectionId: ID!
     $title: String!
     $label: String!
-    $position: Int!
+    $pos: Int!
   ) {
     insertCard(
       request: {
-        columnId: $columnId
+        sectionId: $sectionId
         title: $title
         label: $label
-        position: $position
+        pos: $pos
       }
     ) {
       title
@@ -53,34 +52,34 @@ const onCardAdded = gql`
       id
       title
       description
-      columnId
-      position
+      sectionId
+      pos
     }
   }
 `;
 
 const UPDATE_CARD = gql`
-  mutation UpdateCard($cardId: String!, $position: Int!, $columnId: String!) {
-    updateCardPosition(
-      request: { cardId: $cardId, position: $position, columnId: $columnId }
+  mutation UpdateCard($cardId: String!, $pos: Int!, $sectionId: String!) {
+    updateCardPos(
+      request: { cardId: $cardId, pos: $pos, sectionId: $sectionId }
     ) {
       id
       title
       label
-      position
+      pos
     }
   }
 `;
 
 const ON_CARD_UPDATE_SUBSCRIPTION = gql`
   subscription {
-    onCardPositionChange {
+    onCardPosChange {
       id
       title
       label
       description
-      position
-      columnId
+      pos
+      sectionId
     }
   }
 `;
@@ -92,11 +91,11 @@ const CardContainer = ({ item, boards }) => {
 
   const [insertCard, { data }] = useMutation(ADD_CARD);
 
-  const [updateCardPosition] = useMutation(UPDATE_CARD);
+  const [updateCardPos] = useMutation(UPDATE_CARD);
 
   const { data: { cardAdded } = {} } = useSubscription(onCardAdded);
 
-  const { data: { onCardPositionChange } = {} } = useSubscription(
+  const { data: { onCardPosChange } = {} } = useSubscription(
     ON_CARD_UPDATE_SUBSCRIPTION
   );
 
@@ -108,7 +107,7 @@ const CardContainer = ({ item, boards }) => {
 
   useEffect(() => {
     if (cardAdded) {
-      if (item.id === cardAdded.columnId) {
+      if (item.id === cardAdded.sectionId) {
         setCards(item.cards.concat(cardAdded));
 
         setTempCardActive(false);
@@ -117,40 +116,40 @@ const CardContainer = ({ item, boards }) => {
   }, [cardAdded]);
 
   useEffect(() => {
-    if (onCardPositionChange) {
-      if (item.id === onCardPositionChange.columnId) {
+    if (onCardPosChange) {
+      if (item.id === onCardPosChange.sectionId) {
         //subscription logic comes here
       }
     }
-  }, [onCardPositionChange]);
+  }, [onCardPosChange]);
 
   const onCardDrop = (columnId, addedIndex, removedIndex, payload) => {
-    let updatedPOSITION;
+    let updatedPOS;
     if (addedIndex !== null && removedIndex !== null) {
       let boardCards = boards.filter((p) => p.id === columnId)[0];
 
-      updatedPOSITION = positionCalculation(removedIndex, addedIndex, boardCards.cards);
+      updatedPOS = PosCalculation(removedIndex, addedIndex, boardCards.cards);
 
       let newCards = cards.map((item) => {
         if (item.id === payload.id) {
           return {
             ...item,
-            position: updatedPOSITION,
+            pos: updatedPOS,
           };
         } else {
           return item;
         }
       });
-      newCards = sortBy(newCards, (item) => item.position);
+      newCards = sortBy(newCards, (item) => item.pos);
 
       console.log("newCards", newCards);
       setCards(newCards);
 
-      updateCardPosition({
+      updateCardPos({
         variables: {
           cardId: payload.id,
-          position: parseInt(updatedPOSITION),
-          columnId: columnId,
+          pos: parseInt(updatedPOS),
+          sectionId: columnId,
         },
       });
     } else if (addedIndex !== null) {
@@ -158,36 +157,36 @@ const CardContainer = ({ item, boards }) => {
       const columnIndex = boards.indexOf(newColumn);
 
       if (addedIndex === 0) {
-        updatedPOSITION = newColumn.cards[0].position / 2;
+        updatedPOS = newColumn.cards[0].pos / 2;
       } else if (addedIndex === newColumn.cards.length) {
-        updatedPOSITION = newColumn.cards[newColumn.cards.length - 1].position + 16384;
+        updatedPOS = newColumn.cards[newColumn.cards.length - 1].pos + 16384;
       } else {
-        let afterCardPOSITION = newColumn.cards[addedIndex].position;
-        let beforeCardPOSITION = newColumn.cards[addedIndex - 1].position;
+        let afterCardPOS = newColumn.cards[addedIndex].pos;
+        let beforeCardPOS = newColumn.cards[addedIndex - 1].pos;
 
-        updatedPOSITION = (afterCardPOSITION + beforeCardPOSITION) / 2;
+        updatedPOS = (afterCardPOS + beforeCardPOS) / 2;
       }
 
       let newCards = cards.map((item) => {
         if (item.id === payload.id) {
           return {
             ...item,
-            position: updatedPOSITION,
+            pos: updatedPOS,
           };
         } else {
           return item;
         }
       });
 
-      newCards = sortBy(newCards, (item) => item.position);
+      newCards = sortBy(newCards, (item) => item.pos);
 
       setCards(newCards);
 
-      updateCardPosition({
+      updateCardPos({
         variables: {
           cardId: payload.id,
-          position: parseInt(updatedPOSITION),
-          columnId: columnId,
+          pos: parseInt(updatedPOS),
+          sectionId: columnId,
         },
       });
     }
@@ -203,12 +202,12 @@ const CardContainer = ({ item, boards }) => {
       console.log("==>", cards[cards.length - 1]);
       insertCard({
         variables: {
-          columnId: item.id,
+          sectionId: item.id,
           title: cardText,
           label: cardText,
-          position:
+          pos:
             cards && cards.length > 0
-              ? cards[cards.length - 1].position + 16348
+              ? cards[cards.length - 1].pos + 16348
               : 16348,
         },
       });
@@ -220,7 +219,7 @@ const CardContainer = ({ item, boards }) => {
   return (
     <Draggable key={item.id}>
       <Wrapper className={"card-container"}>
-        <WrappedColumn>
+        <WrappedSection>
           <CardContainerHeader className={"column-drag-handle"}>
             <ContainerContainerTitle>{item.title}</ContainerContainerTitle>
           </CardContainerHeader>
@@ -228,8 +227,8 @@ const CardContainer = ({ item, boards }) => {
             <Container
               orientation={"vertical"}
               groupName="col"
-              // onDragStart={(e) => console.log("Drag Started")}
-              // onDragEnd={(e) => console.log("drag end", e)}
+              onDragStart={(e) => console.log("Drag Started")}
+              onDragEnd={(e) => console.log("drag end", e)}
               onDrop={(e) => {
                 console.log("card", e);
                 onCardDrop(item.id, e.addedIndex, e.removedIndex, e.payload);
@@ -237,7 +236,7 @@ const CardContainer = ({ item, boards }) => {
               dragClass="card-ghost"
               dropClass="card-ghost-drop"
               onDragEnter={() => {
-                // console.log("drag enter:", item.id);
+                console.log("drag enter:", item.id);
               }}
               getChildPayload={(index) => {
                 return cards[index];
@@ -286,7 +285,7 @@ const CardContainer = ({ item, boards }) => {
               </AddCardButtonDiv>
             )}
           </CardsContainer>
-        </WrappedColumn>
+        </WrappedSection>
       </Wrapper>
     </Draggable>
   );

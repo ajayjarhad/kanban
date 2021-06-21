@@ -1,47 +1,54 @@
-const Mongoose = require('mongoose');
-const cardSchema = new Mongoose.Schema({
+const Mongoose = require("mongoose");
+
+const cardSchema = new Mongoose.Schema(
+  {
     title: {
-        type: String,
-        required: true,
+      type: String,
+      required: true,
     },
     label: {
-        type: String,
-        rquired: true,
+      type: String,
+      required: true,
     },
     description: String,
-    position: {
-        type: Number,
-        required: true
+    pos: {
+      type: Number,
+      required: true,
     },
-    columnId: {
-        type: Mongoose.Schema.Types.ObjectId,
-        ref: "Column",
+    sectionId: {
+      type: Mongoose.Schema.Types.ObjectId,
+      ref: "Section",
     },
-},
-    { timestamp: true },
+  },
+  { timestamps: true }
 );
 
-class Card{
-    static insertCard(cardInfo) {
-        const card = this(cardInfo);
-        return card.save();
-    }
-    static getCardByColumnId(columnId) {
-        return this.find({ columnId }).sort('position').exec();
-    }
-    static updatePos(cardId, position, columnId) {
-        return this.findOneAndUpdate({
-            _id: Mongoose.mongo.ObjectId(cardId),
+class Card {
+  static insertCard(cardInfo) {
+    const card = this(cardInfo);
+
+    return card.save();
+  }
+
+  static getCardBySectionId(sectionId) {
+    return this.find({ sectionId }).sort("pos").exec();
+  }
+
+  static updatePos(cardId, pos, sectionId) {
+    return this.findOneAndUpdate(
+      {
+        _id: Mongoose.mongo.ObjectID(cardId),
+      },
+      {
+        $set: {
+          pos,
+          sectionId,
         },
-            {
-                $set: {
-                    position,
-                    columnId,
-                },
-            }
-        ).exec();
-    }
+      }
+    ).exec();
+  }
 }
 
 cardSchema.loadClass(Card);
-module.exports = Mongoose.model("Card", cardSchema)
+
+module.exports = Mongoose.model("Card", cardSchema);

@@ -1,50 +1,55 @@
-const { gql } = require('apollo-server-express');
 const mutationResolvers = require("./mutationResolvers");
-const queryResolvers = require('./queryResolvers');
+const queryResolvers = require("./queryResolvers");
 
+const { gql } = require("apollo-server-express");
 const cardTypeDefs = gql`
-input insertCardInput{
+  input insertCardInput {
     title: String!
     label: String!
-    columnId: ID!
-    position: Int!
-}
-input updateCardPositionInput{
+    sectionId: ID!
+    pos: Int!
+  }
+
+  input updateCardPosInput {
     cardId: String!
-    columnId: String!
-    position:Int!
-}
-input cardColumnInput{
-    columnId: String!
-}
-type Card{
+    sectionId: String!
+    pos: Int!
+  }
+
+  input cardSectionInput {
+    sectionId: String!
+  }
+
+  type Card {
     id: ID
     title: String!
     label: String!
     description: String
-    position: Int
-    columnId: String!
-}
-type Query{
+    pos: Int
+    sectionId: String!
+  }
+
+  type Query {
     card: String
-    fetchCardsByColumnId(request: cardColumnInput): [Card]
-}
-type Mutation{
+    fetchCardsBySectionId(request: cardSectionInput): [Card]
+  }
+
+  type Mutation {
     insertCard(request: insertCardInput): Card
-    updateCardPosition(request: updateCardPositionInput): Card
-}
+    updateCardPos(request: updateCardPosInput): Card
+  }
 `;
 
 const cardResolvers = {
-    Query: {
-        ...queryResolvers,
-    },
-    Mutation: {
-        ...mutationResolvers,
-    },
+  Query: {
+    ...queryResolvers,
+  },
+  Mutation: {
+    ...mutationResolvers,
+  },
 };
 
 module.exports = {
-    cardTypeDefs,
-    cardResolvers,
-}
+  cardTypeDefs,
+  cardResolvers,
+};

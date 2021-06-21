@@ -1,64 +1,67 @@
-import React, { useState, useEffect } from 'react';
-// import CardContainer from './Cards/CardsContainer';
+import React, { useState, useEffect } from "react";
+import CardContainer from "../CardsContainer";
+import { Container } from "react-smooth-dnd";
 import { IoIosAdd } from "react-icons/io";
 import sortBy from "lodash/sortBy";
 import { useMutation, useSubscription, useQuery } from "@apollo/react-hooks";
 import gql from "graphql-tag";
-import positionCalculation from '../../utils/positionCalculation';
+import PosCalculation from "../../utils/pos_calculation";
 import {
-    BoardContainer,
-    CardHorizontalContainer,
-    AddColumnDiv,
-    AddColumnForm,
-    AddColumnLink,
-    AddColumnLinkSpan,
-    AddColumnLinkIconSpan,
-    AddColumnInput,
-    ActiveAddColumnInput,
-    SubmitCardButtonDiv,
-    SubmitCardButton,
-    SubmitCardIcon,
+  BoardContainer,
+  CardHorizontalContainer,
+  AddSectionDiv,
+  AddSectionForm,
+  AddSectionLink,
+  AddSectionLinkSpan,
+  AddSectionLinkIconSpan,
+  AddSectionInput,
+  ActiveAddSectionInput,
+  SubmitCardButtonDiv,
+  SubmitCardButton,
+  SubmitCardIcon,
 } from "./board.styles";
 
 const BOARD_QUERY = gql`
   query {
-    fetchColumns {
+    fetchSections {
       id
       title
       label
-      position
+      pos
       description
       cards {
         id
         title
         label
         description
-        position
+        pos
       }
     }
   }
 `;
+
 const BOARD_SUBSCRIPTION = gql`
   subscription {
-    columnAdded {
+    sectionAdded {
       id
       title
       label
       description
-      position
+      pos
       cards {
         id
         title
         label
-        position
+        pos
         description
       }
     }
   }
 `;
-const ADD_COLUMN = gql`
-  mutation AddColumn($title: String!, $label: String!, $position: Int!) {
-    insertColumn(request: { title: $title, label: $label, position: $position }) {
+
+const ADD_SECTION = gql`
+  mutation AddSection($title: String!, $label: String!, $pos: Int!) {
+    insertSection(request: { title: $title, label: $label, pos: $pos }) {
       title
       description
       id
@@ -66,175 +69,180 @@ const ADD_COLUMN = gql`
     }
   }
 `;
-const UPDATE_COLUMN_POSITION = gql`
-mutation UpdateColumn($columnId: String!, $position: Int!) {
-  updateColumnPosition(request: { columnId: $columnId, position: $position }) {
-    id
-    position
+
+const UPDATE_SECTION_POS = gql`
+  mutation UpdateSection($sectionId: String!, $pos: Int!) {
+    updateSectionPos(request: { sectionId: $sectionId, pos: $pos }) {
+      id
+      pos
+    }
   }
-}
 `;
 
-const ON_COLUMN_POSITION_CHANGES = gql`
-subscription {
-  onColumnPositionChange {
-    id
-    position
+const ON_SECTION_POS_CHANGES = gql`
+  subscription {
+    onSectionPosChange {
+      id
+      pos
+    }
   }
-}
 `;
+
+// const REORDER_SECTION = gql``;
 
 const Board = () => {
-    const [isAddColumnInputActive, setAddColumnInputActive] = useState(false);
-    const [addColumnInputText, setAddColumnInputText] = useState("");
-    const [boards, setBoard] = useState([]);
-    const { loading, error, data } = useQuery(BOARD_QUERY);
+  const [isAddSectionInputActive, setAddSectionInputActive] = useState(false);
 
-    const onAddColumnSubmit = () => {
-        if (addColumnInputText) {
-            
-        }
-    };
+  const [addSectionInpuText, setAddSectionInputText] = useState("");
+  const [boards, setBoards] = useState([]);
+  const [AddSection, { insertSection }] = useMutation(ADD_SECTION);
 
- 
-    
-    const Board = () => {
-        const [isAddColumnInputActive, setAddColumnInputActive] = useState(false);
-  
-        const [addColumnInputText, setAddColumnInputText] = useState("");
-        const [boards, setBoards] = useState([]);
-        const [AddColumn, { insertColumn }] = useMutation(ADD_COLUMN);
-  
-        const { loading, error, data } = useQuery(BOARD_QUERY);
-  
-        const [updateColumnPosition] = useMutation(UPDATE_COLUMN_POSITION);
-  
-        useEffect(() => {
-            if (data) {
-                setBoards(data.fetchColumns);
-            }
-        }, [data]);
-  
-        const { data: { columnAdded } = {} } = useSubscription(BOARD_SUBSCRIPTION);
-  
-        const { data: { onColumnPositionChange } = {} } = useSubscription(
-            ON_COLUMN_POSITION_CHANGES
-        );
-  
-        useEffect(() => {
-            if (onColumnPositionChange) {
-                console.log("onColumnPositionChange", onColumnPositionChange);
-                let newBoards = boards;
-  
-                newBoards = newBoards.map((board) => {
-                    if (board.id === onColumnPositionChange.id) {
-                        return { ...board, position: onColumnPositionChange.position };
-                    } else {
-                        return board;
-                    }
-                });
-                let sortedBoards = sortBy(newBoards, [
-                    (board) => {
-                        return board.position;
-                    },
-                ]);
-                console.log("useEffect", sortedBoards);
-                setBoards(sortedBoards);
-            }
-        }, [onColumnPositionChange]);
-  
-        useEffect(() => {
-            if (columnAdded) {
-                setBoards(boards.concat(columnAdded));
-            }
-        }, [columnAdded]);
-  
-        const onColumnDrop = ({ removedIndex, addedIndex, payload }) => {
-            if (data) {
-                let updatePOSITION = positionCalculation(
-                    removedIndex,
-                    addedIndex,
-                    data.fetchColumns
-                );
-                let newBoards = boards.map((board) => {
-                    if (board.id === payload.id) {
-                        return { ...board, position: updatePOSITION };
-                    } else {
-                        return board;
-                    }
-                });
-  
-                let sortedBoards = sortBy(newBoards, [
-                    (board) => {
-                        return board.position;
-                    },
-                ]);
-  
-                updateColumnPosition({
-                    variables: {
-                        columnId: payload.id,
-                        position: parseInt(updatePOSITION),
-                    },
-                });
-                setBoards([...sortedBoards]);
-            }
-        };
-  
-        const onAddColumnSubmit = () => {
-            if (addColumnInputText) {
-                AddColumn({
-                    variables: {
-                        title: addColumnInputText,
-                        label: addColumnInputText,
-                        position:
-                            boards && boards.length > 0
-                                ? boards[boards.length - 1].position + 16384
-                                : 16384,
-                    },
-                });
-          }
-            else {
-              console.log('Error')
-          }
-        };
+  const { loading, error, data } = useQuery(BOARD_QUERY);
 
+  const [updateSectionPos] = useMutation(UPDATE_SECTION_POS);
+
+  useEffect(() => {
+    if (data) {
+      setBoards(data.fetchSections);
     }
-    
-    return (
-        <BoardContainer>
-       
-        <AddColumnDiv onClick={() => setAddColumnInputActive(true)}>
-          <AddColumnForm>
-            {isAddColumnInputActive ? (
-              <React.Fragment>
-                <ActiveAddColumnInput
-                  onChange={(e) => setAddColumnInputText(e.target.value)}
-                />
-                <SubmitCardButtonDiv>
-                  <SubmitCardButton
-                    type="button"
-                    value="Add Card"
-                    onClick={onAddColumnSubmit}
-                  />
-                  <SubmitCardIcon>
-                    <IoIosAdd />
-                  </SubmitCardIcon>
-                </SubmitCardButtonDiv>
-              </React.Fragment>
-            ) : (
-              <React.Fragment>
-                <AddColumnLink href="#">
-                  <AddColumnLinkSpan>
-                    <IoIosAdd size={28} />
-                    Add another list
-                  </AddColumnLinkSpan>
-                </AddColumnLink>
-                <AddColumnInput />
-              </React.Fragment>
-            )}
-          </AddColumnForm>
-        </AddColumnDiv>
-      </BoardContainer>
-    );
+  }, [data]);
+
+  const { data: { sectionAdded } = {} } = useSubscription(BOARD_SUBSCRIPTION);
+
+  const { data: { onSectionPosChange } = {} } = useSubscription(
+    ON_SECTION_POS_CHANGES
+  );
+
+  useEffect(() => {
+    if (onSectionPosChange) {
+      console.log("onSectionPosChange", onSectionPosChange);
+      let newBoards = boards;
+
+      newBoards = newBoards.map((board) => {
+        if (board.id === onSectionPosChange.id) {
+          return { ...board, pos: onSectionPosChange.pos };
+        } else {
+          return board;
+        }
+      });
+      let sortedBoards = sortBy(newBoards, [
+        (board) => {
+          return board.pos;
+        },
+      ]);
+      console.log("useEffect", sortedBoards);
+      setBoards(sortedBoards);
+    }
+  }, [onSectionPosChange]);
+
+  useEffect(() => {
+    if (sectionAdded) {
+      setBoards(boards.concat(sectionAdded));
+    }
+  }, [sectionAdded]);
+
+  const onColumnDrop = ({ removedIndex, addedIndex, payload }) => {
+    if (data) {
+      let updatePOS = PosCalculation(
+        removedIndex,
+        addedIndex,
+        data.fetchSections
+      );
+      let newBoards = boards.map((board) => {
+        if (board.id === payload.id) {
+          return { ...board, pos: updatePOS };
+        } else {
+          return board;
+        }
+      });
+
+      let sortedBoards = sortBy(newBoards, [
+        (board) => {
+          return board.pos;
+        },
+      ]);
+
+      updateSectionPos({
+        variables: {
+          sectionId: payload.id,
+          pos: parseInt(updatePOS),
+        },
+      });
+      setBoards([...sortedBoards]);
+    }
   };
-  export default Board;
+
+  const onAddSectionSubmit = () => {
+    if (addSectionInpuText) {
+      AddSection({
+        variables: {
+          title: addSectionInpuText,
+          label: addSectionInpuText,
+          pos:
+            boards && boards.length > 0
+              ? boards[boards.length - 1].pos + 16384
+              : 16384,
+        },
+      });
+    }
+  };
+
+  return (
+    <BoardContainer>
+      <Container
+        orientation={"horizontal"}
+        onDrop={onColumnDrop}
+        onDragStart={() => {
+          console.log("on drag start");
+        }}
+        getChildPayload={(index) => {
+          return boards[index];
+        }}
+        dragHandleSelector=".column-drag-handle"
+        dropPlaceholder={{
+          animationDuration: 150,
+          showOnTop: true,
+          className: "cards-drop-preview",
+        }}
+      >
+        {boards.length > 0 &&
+          boards.map((item, index) => (
+            <CardContainer item={item} key={index} boards={boards} />
+          ))}
+      </Container>
+      <AddSectionDiv onClick={() => setAddSectionInputActive(true)}>
+        <AddSectionForm>
+          {isAddSectionInputActive ? (
+            <React.Fragment>
+              <ActiveAddSectionInput
+                onChange={(e) => setAddSectionInputText(e.target.value)}
+              />
+              <SubmitCardButtonDiv>
+                <SubmitCardButton
+                  type="button"
+                  value="Add Card"
+                  onClick={onAddSectionSubmit}
+                />
+                <SubmitCardIcon>
+                  <IoIosAdd />
+                </SubmitCardIcon>
+              </SubmitCardButtonDiv>
+            </React.Fragment>
+          ) : (
+            <React.Fragment>
+              <AddSectionLink href="#">
+                <AddSectionLinkSpan>
+                  <IoIosAdd size={28} />
+                  Add another list
+                </AddSectionLinkSpan>
+              </AddSectionLink>
+              <AddSectionInput />
+            </React.Fragment>
+          )}
+        </AddSectionForm>
+      </AddSectionDiv>
+    </BoardContainer>
+  );
+};
+
+export default Board;

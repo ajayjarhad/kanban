@@ -15,7 +15,7 @@ export const BoardContainer = styled.div`
 
 export const CardHorizontalContainer = styled.div``;
 
-export const AddColumnDiv = styled.div`
+export const AddSectionDiv = styled.div`
   background-color: rgba(0, 0, 0, 0.08);
   cursor: pointer;
   border-radius: 3px;
@@ -27,26 +27,26 @@ export const AddColumnDiv = styled.div`
     border-color 85ms ease-in;
 `;
 
-export const AddColumnForm = styled.form``;
+export const AddSectionForm = styled.form``;
 
-export const AddColumnLink = styled.a`
+export const AddSectionLink = styled.a`
   text-decoration: none;
 `;
 
-export const AddColumnLinkSpan = styled.span`
+export const AddSectionLinkSpan = styled.span`
   color: #172b4d;
 `;
 
-export const HideColumnLinkSpan = styled(AddColumnLinkSpan)`
+export const HideSectionLinkSpan = styled(AddSectionLinkSpan)`
   color: #fff;
   display: none;
   padding: 6px 8px;
   transition: color 85ms ease-in;
 `;
 
-export const AddColumnLinkIconSpan = styled.span``;
+export const AddSectionLinkIconSpan = styled.span``;
 
-export const AddColumnInput = styled.input`
+export const AddSectionInput = styled.input`
   background: none;
   border-color: transparent;
   box-shadow: none;
@@ -55,7 +55,7 @@ export const AddColumnInput = styled.input`
   margin: 0;
 `;
 
-export const ActiveAddColumnInput = styled(AddColumnInput)`
+export const ActiveAddSectionInput = styled(AddSectionInput)`
   background: #fff;
   border: none;
   box-shadow: inset 0 0 0 2px #0079bf;

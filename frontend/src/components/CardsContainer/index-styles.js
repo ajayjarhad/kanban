@@ -8,7 +8,7 @@ export const Wrapper = styled.div`
   opacity: ${(props) => (props.isDragging ? 0 : 1)};
 `;
 
-export const WrappedColumn = styled.column`
+export const WrappedSection = styled.section`
   width: 280px;
   background-color: #e3e3e3;
   border-radius: 3px;
@@ -48,6 +48,7 @@ export const AddCardButtonDiv = styled.div`
   min-height: 24px;
   max-height: 24px;
   cursor: pointer;
+
   :hover {
     background-color: rgba(9, 30, 66, 0.08);
     color: #172b4d;

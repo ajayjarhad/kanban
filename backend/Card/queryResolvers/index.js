@@ -1,5 +1,5 @@
-const fetchCardsByColumnId = require("./fetchCardByColumnId");
+const fetchCardsBySectionId = require("./fetchCardsBySectionId");
 
 module.exports = {
-    fetchCardsByColumnId,  
-}
+  fetchCardsBySectionId,
+};
