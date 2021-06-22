@@ -6,8 +6,10 @@ const cardTypeDefs = gql`
   input insertCardInput {
     title: String!
     label: String!
+    description: String!
     sectionId: ID!
     pos: Int!
+
   }
 
   input updateCardPosInput {

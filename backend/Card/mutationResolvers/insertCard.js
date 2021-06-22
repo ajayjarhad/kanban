@@ -4,6 +4,7 @@ module.exports = async (__, args, cxt) => {
       title: args.request.title,
       label: args.request.label,
       pos: args.request.pos,
+      description: args.request.description,
       sectionId: args.request.sectionId,
     };
 

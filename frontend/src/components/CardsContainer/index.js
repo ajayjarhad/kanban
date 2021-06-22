@@ -29,6 +29,7 @@ const ADD_CARD = gql`
     $sectionId: ID!
     $title: String!
     $label: String!
+    $description: String!
     $pos: Int!
   ) {
     insertCard(
@@ -37,11 +38,13 @@ const ADD_CARD = gql`
         title: $title
         label: $label
         pos: $pos
+        description:$description
       }
     ) {
       title
       label
       id
+      description
     }
   }
 `;
@@ -88,6 +91,7 @@ const CardContainer = ({ item, boards }) => {
   const [cards, setCards] = useState([]);
   const [isTempCardActive, setTempCardActive] = useState(false);
   const [cardText, setCardText] = useState("");
+  const [cardDescription, setCardDescription] = useState("");
 
   const [insertCard, { data }] = useMutation(ADD_CARD);
 
@@ -198,13 +202,14 @@ const CardContainer = ({ item, boards }) => {
 
   const onAddCardSubmit = (e) => {
     e.preventDefault();
-    if (cardText) {
+    if (cardText ) {
       console.log("==>", cards[cards.length - 1]);
       insertCard({
         variables: {
           sectionId: item.id,
           title: cardText,
           label: cardText,
+          description: cardDescription,
           pos:
             cards && cards.length > 0
               ? cards[cards.length - 1].pos + 16348
@@ -213,6 +218,7 @@ const CardContainer = ({ item, boards }) => {
       });
 
       setCardText("");
+      setCardDescription("");
     }
   };
 
@@ -242,9 +248,9 @@ const CardContainer = ({ item, boards }) => {
                 return cards[index];
               }}
               onDragLeave={() => {
-                // console.log("drag leave:", item.id);
+                console.log("drag leave:", item.id);
               }}
-              // onDropReady={(p) => console.log("Drop ready: ", p)}
+              onDropReady={(p) => console.log("Drop ready: ", p)}
               dropPlaceholder={{
                 animationDuration: 150,
                 showOnTop: true,
@@ -264,6 +270,12 @@ const CardContainer = ({ item, boards }) => {
                       placeholder="Enter a title for the card"
                       onChange={(e) => {
                         setCardText(e.target.value);
+                      }}
+                    />
+                     <ListCardTextArea
+                      placeholder="Enter description"
+                      onChange={(e) => {
+                        setCardDescription(e.target.value);
                       }}
                     />
                   </ListCardDetails>

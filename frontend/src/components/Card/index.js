@@ -2,6 +2,9 @@ import React from "react";
 import styled from "styled-components";
 import { Container, Draggable } from "react-smooth-dnd";
 
+import Popup from 'reactjs-popup';
+import 'reactjs-popup/dist/index.css';
+
 const CardContainer = styled.div`
   border-radius: 3px;
   border-bottom: 1px solid #ccc;
@@ -20,7 +23,10 @@ const Card = ({ card }) => {
   return (
     <Draggable key={card.id}>
       <CardContainer className="card">
-        <CardContent>{card.title}</CardContent>
+      <Popup trigger={<CardContent>{card.title}</CardContent>}  modal>
+    <div>{card.description}</div>
+  </Popup>
+        
       </CardContainer>
     </Draggable>
   );
