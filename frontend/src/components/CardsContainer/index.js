@@ -22,6 +22,7 @@ import {
   SubmitCardButtonDiv,
   SubmitCardButton,
   SubmitCardIcon,
+  CardDescriptionArea
 } from "./index-styles";
 
 const ADD_CARD = gql`
@@ -88,6 +89,7 @@ const ON_CARD_UPDATE_SUBSCRIPTION = gql`
 `;
 
 const CardContainer = ({ item, boards }) => {
+
   const [cards, setCards] = useState([]);
   const [isTempCardActive, setTempCardActive] = useState(false);
   const [cardText, setCardText] = useState("");
@@ -122,7 +124,7 @@ const CardContainer = ({ item, boards }) => {
   useEffect(() => {
     if (onCardPosChange) {
       if (item.id === onCardPosChange.sectionId) {
-        //subscription logic comes here
+      
       }
     }
   }, [onCardPosChange]);
@@ -219,6 +221,7 @@ const CardContainer = ({ item, boards }) => {
 
       setCardText("");
       setCardDescription("");
+ 
     }
   };
 
@@ -259,7 +262,7 @@ const CardContainer = ({ item, boards }) => {
               dropPlaceholderAnimationDuration={200}
             >
               {cards.map((card) => (
-                <Card key={card.id} card={card} />
+                <Card key={card.id} card={card} onAddCardSubmit={onAddCardSubmit} />
               ))}
             </Container>
             {isTempCardActive ? (
@@ -272,12 +275,12 @@ const CardContainer = ({ item, boards }) => {
                         setCardText(e.target.value);
                       }}
                     />
-                     <ListCardTextArea
-                      placeholder="Enter description"
+                      <CardDescriptionArea
+                      placeholder="Enter description (optional)"
                       onChange={(e) => {
                         setCardDescription(e.target.value);
                       }}
-                    />
+                    /> 
                   </ListCardDetails>
                 </ListCardComponent>
                 <SubmitCardButtonDiv>

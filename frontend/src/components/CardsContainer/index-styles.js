@@ -9,11 +9,12 @@ export const Wrapper = styled.div`
 `;
 
 export const WrappedSection = styled.section`
-  width: 280px;
+  width: 29.5rem;
   background-color: #e3e3e3;
   border-radius: 3px;
   margin: 5px 5px;
   padding: 10px;
+  margin: 15px;
   position: relative;
   display: inline-flex;
   height: auto;
@@ -28,10 +29,13 @@ export const CardContainerHeader = styled.header`
 
 export const ContainerContainerTitle = styled.span`
   font-weight: bold;
-  font-size: 15px;
+  font-size: 20px;
   line-height: 18px;
   cursor: grab;
-  width: 70%;
+  width: 100%;
+  text-align: center;
+  padding-top:4px;
+  
 `;
 
 export const CardsContainer = styled.div`
@@ -68,11 +72,12 @@ export const ListCardComponent = styled.div`
   cursor: pointer;
   display: block;
   margin-bottom: 8px;
-  max-width: 300px;
+  width: 27.5rem;
   min-height: 20px;
   position: relative;
   text-decoration: none;
   z-index: 0;
+
 `;
 
 export const ListCardDetails = styled.div`
@@ -99,6 +104,25 @@ export const ListCardTextArea = styled.textarea`
   line-height: 20px;
   font-weight: 400;
   outline: none;
+  border-bottom: 2px solid #ffc107;
+`;
+export const CardDescriptionArea = styled.textarea`
+  overflow: hidden;
+  overflow-wrap: break-word;
+  resize: none;
+  height: 54px;
+  background: none;
+  border: none;
+  box-shadow: none;
+  margin-bottom: 4px;
+  max-height: 162px;
+  min-height: 54px;
+  padding: 0;
+  width: 100%;
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 400;
+  outline: none;
 `;
 
 export const SubmitCardButtonDiv = styled.div`
@@ -106,7 +130,7 @@ export const SubmitCardButtonDiv = styled.div`
 `;
 
 export const SubmitCardButton = styled.input`
-  background-color: #5aac44;
+  background-color: #ffc107;
   box-shadow: none;
   border: none;
   color: #fff;

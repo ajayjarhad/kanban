@@ -1,24 +1,13 @@
 import React, { useState, useEffect } from "react";
 import CardContainer from "../CardsContainer";
 import { Container } from "react-smooth-dnd";
-import { IoIosAdd } from "react-icons/io";
 import sortBy from "lodash/sortBy";
 import { useMutation, useSubscription, useQuery } from "@apollo/react-hooks";
 import gql from "graphql-tag";
 import PosCalculation from "../../utils/pos_calculation";
+
 import {
-  BoardContainer,
-  CardHorizontalContainer,
-  AddSectionDiv,
-  AddSectionForm,
-  AddSectionLink,
-  AddSectionLinkSpan,
-  AddSectionLinkIconSpan,
-  AddSectionInput,
-  ActiveAddSectionInput,
-  SubmitCardButtonDiv,
-  SubmitCardButton,
-  SubmitCardIcon,
+  BoardContainer
 } from "./board.styles";
 
 const BOARD_QUERY = gql`
@@ -36,36 +25,6 @@ const BOARD_QUERY = gql`
         description
         pos
       }
-    }
-  }
-`;
-
-const BOARD_SUBSCRIPTION = gql`
-  subscription {
-    sectionAdded {
-      id
-      title
-      label
-      description
-      pos
-      cards {
-        id
-        title
-        label
-        pos
-        description
-      }
-    }
-  }
-`;
-
-const ADD_SECTION = gql`
-  mutation AddSection($title: String!, $label: String!, $pos: Int!) {
-    insertSection(request: { title: $title, label: $label, pos: $pos }) {
-      title
-      description
-      id
-      label
     }
   }
 `;
@@ -88,17 +47,11 @@ const ON_SECTION_POS_CHANGES = gql`
   }
 `;
 
-// const REORDER_SECTION = gql``;
+
 
 const Board = () => {
-  const [isAddSectionInputActive, setAddSectionInputActive] = useState(false);
-
-  const [addSectionInpuText, setAddSectionInputText] = useState("");
   const [boards, setBoards] = useState([]);
-  const [AddSection, { insertSection }] = useMutation(ADD_SECTION);
-
   const { loading, error, data } = useQuery(BOARD_QUERY);
-
   const [updateSectionPos] = useMutation(UPDATE_SECTION_POS);
 
   useEffect(() => {
@@ -106,8 +59,6 @@ const Board = () => {
       setBoards(data.fetchSections);
     }
   }, [data]);
-
-  const { data: { sectionAdded } = {} } = useSubscription(BOARD_SUBSCRIPTION);
 
   const { data: { onSectionPosChange } = {} } = useSubscription(
     ON_SECTION_POS_CHANGES
@@ -135,11 +86,6 @@ const Board = () => {
     }
   }, [onSectionPosChange]);
 
-  useEffect(() => {
-    if (sectionAdded) {
-      setBoards(boards.concat(sectionAdded));
-    }
-  }, [sectionAdded]);
 
   const onColumnDrop = ({ removedIndex, addedIndex, payload }) => {
     if (data) {
@@ -172,21 +118,6 @@ const Board = () => {
     }
   };
 
-  const onAddSectionSubmit = () => {
-    if (addSectionInpuText) {
-      AddSection({
-        variables: {
-          title: addSectionInpuText,
-          label: addSectionInpuText,
-          pos:
-            boards && boards.length > 0
-              ? boards[boards.length - 1].pos + 16384
-              : 16384,
-        },
-      });
-    }
-  };
-
   return (
     <BoardContainer>
       <Container
@@ -207,40 +138,9 @@ const Board = () => {
       >
         {boards.length > 0 &&
           boards.map((item, index) => (
-            <CardContainer item={item} key={index} boards={boards} />
+           <CardContainer item={item} key={index} boards={boards} />
           ))}
       </Container>
-      <AddSectionDiv onClick={() => setAddSectionInputActive(true)}>
-        <AddSectionForm>
-          {isAddSectionInputActive ? (
-            <React.Fragment>
-              <ActiveAddSectionInput
-                onChange={(e) => setAddSectionInputText(e.target.value)}
-              />
-              <SubmitCardButtonDiv>
-                <SubmitCardButton
-                  type="button"
-                  value="Add Card"
-                  onClick={onAddSectionSubmit}
-                />
-                <SubmitCardIcon>
-                  <IoIosAdd />
-                </SubmitCardIcon>
-              </SubmitCardButtonDiv>
-            </React.Fragment>
-          ) : (
-            <React.Fragment>
-              <AddSectionLink href="#">
-                <AddSectionLinkSpan>
-                  <IoIosAdd size={28} />
-                  Add another list
-                </AddSectionLinkSpan>
-              </AddSectionLink>
-              <AddSectionInput />
-            </React.Fragment>
-          )}
-        </AddSectionForm>
-      </AddSectionDiv>
     </BoardContainer>
   );
 };

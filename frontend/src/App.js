@@ -1,6 +1,7 @@
 import React from "react";
 import "./App.css";
 import Board from "./components/Board/Board";
+import Header from "./components/Header"
 import { ApolloProvider } from "@apollo/react-hooks";
 import { HttpLink } from "apollo-link-http";
 import { split } from "apollo-link";
@@ -38,7 +39,7 @@ function App() {
   return (
     <ApolloProvider client={client}>
       <div className="App" style={{ height: "100vh" }}>
-        <Board />
+        <Header />
       </div>
     </ApolloProvider>
   );
