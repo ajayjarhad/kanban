@@ -1,34 +1,34 @@
-import React from 'react';
-import Board from '../Board/Board'
-import clsx from 'clsx';
-import { makeStyles, useTheme } from '@material-ui/core/styles';
-import Drawer from '@material-ui/core/Drawer';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import List from '@material-ui/core/List';
-import Typography from '@material-ui/core/Typography';
-import Divider from '@material-ui/core/Divider';
-import IconButton from '@material-ui/core/IconButton';
-import MenuIcon from '@material-ui/icons/Menu';
-import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
-import ChevronRightIcon from '@material-ui/icons/ChevronRight';
-import ListItem from '@material-ui/core/ListItem';
-import Avatar from '@material-ui/core/Avatar';
-import amber from '@material-ui/core/colors/amber';
-import EventSharpIcon from '@material-ui/icons/EventSharp';
+// This component is responsible for rendering the header navigation. The file just contains UI logic.
+import React from "react";
+import Board from "../Board/Board";
+import clsx from "clsx";
+import { makeStyles, useTheme } from "@material-ui/core/styles";
+import Drawer from "@material-ui/core/Drawer";
+import CssBaseline from "@material-ui/core/CssBaseline";
+import AppBar from "@material-ui/core/AppBar";
+import Toolbar from "@material-ui/core/Toolbar";
+import List from "@material-ui/core/List";
+import Typography from "@material-ui/core/Typography";
+import Divider from "@material-ui/core/Divider";
+import IconButton from "@material-ui/core/IconButton";
+import MenuIcon from "@material-ui/icons/Menu";
+import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
+import ChevronRightIcon from "@material-ui/icons/ChevronRight";
+import ListItem from "@material-ui/core/ListItem";
+import Avatar from "@material-ui/core/Avatar";
+import amber from "@material-ui/core/colors/amber";
 
 const drawerWidth = 240;
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    display: 'flex',
+    display: "flex",
     padding: 0,
-    margin:0,
+    margin: 0,
   },
   appBar: {
-    backgroundColor: '#ffc107',
-    transition: theme.transitions.create(['margin', 'width'], {
+    backgroundColor: "#ffc107",
+    transition: theme.transitions.create(["margin", "width"], {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen,
     }),
@@ -36,7 +36,7 @@ const useStyles = makeStyles((theme) => ({
   appBarShift: {
     width: `calc(100% - ${drawerWidth}px)`,
     marginLeft: drawerWidth,
-    transition: theme.transitions.create(['margin', 'width'], {
+    transition: theme.transitions.create(["margin", "width"], {
       easing: theme.transitions.easing.easeOut,
       duration: theme.transitions.duration.enteringScreen,
     }),
@@ -45,34 +45,33 @@ const useStyles = makeStyles((theme) => ({
     marginRight: theme.spacing(2),
   },
   hide: {
-    display: 'none',
+    display: "none",
   },
   drawer: {
     width: drawerWidth,
     flexShrink: 0,
-    
   },
   drawerPaper: {
     width: drawerWidth,
-    backgroundColor:'black',
+    backgroundColor: "black",
   },
   drawerHeader: {
-    display: 'flex',
-    alignItems: 'center',
+    display: "flex",
+    alignItems: "center",
     padding: theme.spacing(0, 1),
     ...theme.mixins.toolbar,
-    justifyContent: 'flex-end',
+    justifyContent: "flex-end",
   },
   content: {
     flexGrow: 1,
-    transition: theme.transitions.create('margin', {
+    transition: theme.transitions.create("margin", {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen,
     }),
     marginLeft: -drawerWidth,
   },
   contentShift: {
-    transition: theme.transitions.create('margin', {
+    transition: theme.transitions.create("margin", {
       easing: theme.transitions.easing.easeOut,
       duration: theme.transitions.duration.enteringScreen,
     }),
@@ -83,16 +82,14 @@ const useStyles = makeStyles((theme) => ({
     margin: 15,
   },
   theText: {
-    color:'white'
+    color: "white",
   },
   amberText: {
-    color:'#ffc107'
+    color: "#ffc107",
   },
   theBackground: {
-    backgroundColor: '#ffc107',
-  }
-
-
+    backgroundColor: "#ffc107",
+  },
 }));
 
 export default function Header() {
@@ -142,19 +139,22 @@ export default function Header() {
         }}
       >
         <div className={classes.drawerHeader}>
-              <IconButton onClick={handleDrawerClose}>
-            {theme.direction === 'ltr' ? <ChevronLeftIcon className={classes.amberText} /> : <ChevronRightIcon className={classes.theText} />}
+          <IconButton onClick={handleDrawerClose}>
+            {theme.direction === "ltr" ? (
+              <ChevronLeftIcon className={classes.amberText} />
+            ) : (
+              <ChevronRightIcon className={classes.theText} />
+            )}
           </IconButton>
         </div>
         <Divider className={classes.theBackground} />
 
         <List>
-            <ListItem >
-              <Avatar className={classes.amber}>A J</Avatar>   <span className={classes.theText}> Ajay Jarhad</span>
+          <ListItem>
+            <Avatar className={classes.amber}>A J</Avatar>{" "}
+            <span className={classes.theText}> Ajay Jarhad</span>
           </ListItem>
           <Divider className={classes.theBackground} />
-
-
         </List>
       </Drawer>
       <main

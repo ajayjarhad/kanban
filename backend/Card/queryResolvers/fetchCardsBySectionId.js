@@ -1,3 +1,4 @@
+// This module handles sorting the card by the section they belong to.
 module.exports = async (__, args, cxt) => {
   try {
     const sectionId = args.request.sectionId;

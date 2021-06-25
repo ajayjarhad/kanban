@@ -1,3 +1,4 @@
+// This module is responsible for adding a new column/section in our MongoDB.
 module.exports = async (__, args, cxt) => {
   try {
     const sectionInfo = {

@@ -1,7 +1,7 @@
 import React from "react";
 import "./App.css";
 import Board from "./components/Board/Board";
-import Header from "./components/Header"
+import Header from "./components/Header";
 import { ApolloProvider } from "@apollo/react-hooks";
 import { HttpLink } from "apollo-link-http";
 import { split } from "apollo-link";
@@ -10,6 +10,7 @@ import { InMemoryCache } from "apollo-cache-inmemory";
 import ApolloClient from "apollo-client";
 import { WebSocketLink } from "apollo-link-ws";
 
+// Setting up web socket
 const httpLink = new HttpLink({
   uri: "http://localhost:4444/graphql",
 });

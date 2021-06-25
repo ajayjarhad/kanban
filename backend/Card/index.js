@@ -9,7 +9,6 @@ const cardTypeDefs = gql`
     description: String!
     sectionId: ID!
     pos: Int!
-
   }
 
   input updateCardPosInput {

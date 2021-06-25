@@ -1,3 +1,4 @@
+// MongoDB model that handles all the interaction with cards.
 const Mongoose = require("mongoose");
 
 const cardSchema = new Mongoose.Schema(

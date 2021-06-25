@@ -1,3 +1,4 @@
+//MongoDB model for section interactions.
 const Mongoose = require("mongoose");
 
 const sectionSchema = new Mongoose.Schema({

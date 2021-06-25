@@ -34,8 +34,7 @@ export const ContainerContainerTitle = styled.span`
   cursor: grab;
   width: 100%;
   text-align: center;
-  padding-top:4px;
-  
+  padding-top: 4px;
 `;
 
 export const CardsContainer = styled.div`
@@ -77,7 +76,6 @@ export const ListCardComponent = styled.div`
   position: relative;
   text-decoration: none;
   z-index: 0;
-
 `;
 
 export const ListCardDetails = styled.div`

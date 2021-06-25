@@ -1,3 +1,4 @@
+// Module responsible for Updateing chnages in section/column's position whenever it is dragged somewhere else from its original position
 module.exports = async (__, args, cxt) => {
   try {
     const sectionId = args.request.sectionId;

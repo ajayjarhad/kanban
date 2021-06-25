@@ -2,6 +2,7 @@ const mutationResolvers = require("./mutationResolvers");
 const queryResolvers = require("./queryResolvers");
 const { gql } = require("apollo-server-express");
 
+// Section type definition.
 const sectionTypeDefs = gql`
   input insertSectionInput {
     title: String!

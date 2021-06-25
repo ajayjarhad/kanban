@@ -4,14 +4,13 @@ const merge = require("lodash.merge");
 const mongoose = require("mongoose");
 const { PubSub } = require("apollo-server");
 const { createServer } = require("http");
-
 const { cardResolvers, cardTypeDefs } = require("./card");
 const { sectionResolvers, sectionTypeDefs } = require("./section");
-
 const cardModel = require("./card/model");
 const sectionModel = require("./section/model");
 const SUBSCRIPTION_CONSTANTS = require("./subscriptionConstants");
 
+// Type definitions.
 const typeDefs = gql`
   type Subscription {
     sectionAdded: Section
@@ -26,6 +25,7 @@ const typeDefs = gql`
 
 const pubsub = new PubSub();
 
+// Handles subscription resolvers logic
 const SubscriptionsResolvers = {
   Subscription: {
     sectionAdded: {
@@ -54,7 +54,7 @@ const customResolvers = {
     },
   },
 };
-
+// Combining all the resolvers, custom and subscription resolvers are declared here, card and section resolver are declare in their specific files externally.
 const resolvers = merge(
   cardResolvers,
   sectionResolvers,
@@ -63,27 +63,29 @@ const resolvers = merge(
 );
 // Code that starts the server.
 async function startServer() {
-    const apolloServer = new ApolloServer({
-        typeDefs,
-        resolvers,
-        context: () => ({   // Using graphQL context.
-            card: cardModel,
-            section: sectionModel,
-            publisher: pubsub,
-            SUBSCRIPTION_CONSTANTS: SUBSCRIPTION_CONSTANTS,
-        }),
-    });
-    await apolloServer.start();
-    
-    const app = express();
-    apolloServer.applyMiddleware({ app: app }); // This line of code let us to use graphql playgrould @ url/graphql
-    const httpServer = createServer(app);
-    apolloServer.installSubscriptionHandlers(httpServer);
-    await mongoose.connect('mongodb://localhost:27017/kanban',{  //This line of code helps establishing the connection to MongoDB
-        useUnifiedTopology: true,
-        useNewUrlParser: true,
-    });
-    console.log('Connection to mongose is successful')
-    httpServer.listen(4444, () => console.log('The server is live on port 4444'));
+  const apolloServer = new ApolloServer({
+    typeDefs,
+    resolvers,
+    context: () => ({
+      // Using graphQL context.
+      card: cardModel,
+      section: sectionModel,
+      publisher: pubsub,
+      SUBSCRIPTION_CONSTANTS: SUBSCRIPTION_CONSTANTS,
+    }),
+  });
+  await apolloServer.start();
+
+  const app = express();
+  apolloServer.applyMiddleware({ app: app }); // This line of code let us to use graphql playgrould @ url/graphql
+  const httpServer = createServer(app);
+  apolloServer.installSubscriptionHandlers(httpServer);
+  await mongoose.connect("mongodb://localhost:27017/kanban", {
+    //This line of code helps establishing the connection to MongoDB
+    useUnifiedTopology: true,
+    useNewUrlParser: true,
+  });
+  console.log("Connection to mongose is successful");
+  httpServer.listen(4444, () => console.log("The server is live on port 4444"));
 }
 startServer();

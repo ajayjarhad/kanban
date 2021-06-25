@@ -1,10 +1,18 @@
-import React, {useState} from "react";
+// Single card component
+import React from "react";
 import styled from "styled-components";
 import { Container, Draggable } from "react-smooth-dnd";
 
-import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@material-ui/core"
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+} from "@material-ui/core";
 
-import 'reactjs-popup/dist/index.css';
+import "reactjs-popup/dist/index.css";
 
 const CardContainer = styled.div`
   border-radius: 3px;
@@ -19,11 +27,9 @@ const CardContainer = styled.div`
   min-width: 230px;
 `;
 
-
 const CardContent = styled.div``;
 
 const Card = ({ card }) => {
-  
   //Material UI's DialogBox handling logic
   const [open, setOpen] = React.useState(false);
   const handleClickOpen = () => {
@@ -33,19 +39,22 @@ const Card = ({ card }) => {
     setOpen(false);
   };
 
-
   return (
     <Draggable key={card.id}>
       <CardContainer className="card">
-      <CardContent onClick={handleClickOpen}>{card.title}</CardContent>
+        <CardContent onClick={handleClickOpen}>{card.title}</CardContent>
       </CardContainer>
-      <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="form-dialog-title"
+      >
         <DialogTitle id="form-dialog-title">{card.title}</DialogTitle>
         <DialogContent>
-          <DialogContentText color="black">
-           Card Description
-          </DialogContentText>
-          {card.description ? card.description : `You haven't entered card description`}
+          <DialogContentText color="black">Card Description</DialogContentText>
+          {card.description
+            ? card.description
+            : `You haven't entered card description`}
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose} color="amber">

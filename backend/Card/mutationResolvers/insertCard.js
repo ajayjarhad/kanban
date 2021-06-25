@@ -1,3 +1,4 @@
+// This module is responsible for inserting value fo a new card inside our MongoDB
 module.exports = async (__, args, cxt) => {
   try {
     const cardInfo = {
