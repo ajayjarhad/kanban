@@ -73,6 +73,7 @@ const UPDATE_CARD = gql`
       title
       label
       pos
+      sectionId
     }
   }
 `;
@@ -130,6 +131,7 @@ const CardContainer = ({ item, boards }) => {
   // Code that handles card's Drag-n-drop.
   const onCardDrop = (columnId, addedIndex, removedIndex, payload) => {
     let updatedPOS;
+
     if (addedIndex !== null && removedIndex !== null) {
       let boardCards = boards.filter((p) => p.id === columnId)[0];
 
@@ -162,7 +164,7 @@ const CardContainer = ({ item, boards }) => {
       const columnIndex = boards.indexOf(newColumn);
 
       if (addedIndex === 0) {
-        updatedPOS = newColumn.cards[0].pos / 2;
+        updatedPOS = 16384;
       } else if (addedIndex === newColumn.cards.length) {
         updatedPOS = newColumn.cards[newColumn.cards.length - 1].pos + 16384;
       } else {
@@ -234,7 +236,7 @@ const CardContainer = ({ item, boards }) => {
             {/* Drag-n-drop view*/}
             <Container
               orientation={"vertical"}
-              groupName="col"
+              groupName="item"
               onDragStart={(e) => console.log("Drag Started")}
               onDragEnd={(e) => console.log("drag end", e)}
               onDrop={(e) => {

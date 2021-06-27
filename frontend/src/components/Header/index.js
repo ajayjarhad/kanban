@@ -1,6 +1,6 @@
 // This component is responsible for rendering the header navigation. The file just contains UI logic.
 import React from "react";
-import Board from "../Board/Board";
+import Board from "../Board/";
 import clsx from "clsx";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
 import Drawer from "@material-ui/core/Drawer";

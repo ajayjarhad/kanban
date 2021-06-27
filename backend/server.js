@@ -4,12 +4,12 @@ const merge = require("lodash.merge");
 const mongoose = require("mongoose");
 const { PubSub } = require("apollo-server");
 const { createServer } = require("http");
-const { cardResolvers, cardTypeDefs } = require("./card");
+const { cardResolvers, cardTypeDefs } = require("./Card");
 const { sectionResolvers, sectionTypeDefs } = require("./section");
-const cardModel = require("./card/model");
+const cardModel = require("./Card/model");
 const sectionModel = require("./section/model");
 const SUBSCRIPTION_CONSTANTS = require("./subscriptionConstants");
-
+require("dotenv").config();
 // Type definitions.
 const typeDefs = gql`
   type Subscription {
@@ -66,6 +66,8 @@ async function startServer() {
   const apolloServer = new ApolloServer({
     typeDefs,
     resolvers,
+    introspection: true,
+    playground: true,
     context: () => ({
       // Using graphQL context.
       card: cardModel,
@@ -76,16 +78,25 @@ async function startServer() {
   });
   await apolloServer.start();
 
+  const DB_USER = process.env.DB_USER;
+  const DB_PASS = process.env.DB_PASS;
+  const PORT = process.env.PORT || 4444;
+
   const app = express();
   apolloServer.applyMiddleware({ app: app }); // This line of code let us to use graphql playgrould @ url/graphql
   const httpServer = createServer(app);
   apolloServer.installSubscriptionHandlers(httpServer);
-  await mongoose.connect("mongodb://localhost:27017/kanban", {
-    //This line of code helps establishing the connection to MongoDB
-    useUnifiedTopology: true,
-    useNewUrlParser: true,
-  });
+  await mongoose.connect(
+    `mongodb+srv://${DB_USER}:${DB_PASS}@kanban.a4dvq.mongodb.net/kanban?retryWrites=true&w=majority`,
+    {
+      //This line of code helps establishing the connection to MongoDB
+      useUnifiedTopology: true,
+      useNewUrlParser: true,
+    }
+  );
   console.log("Connection to mongose is successful");
-  httpServer.listen(4444, () => console.log("The server is live on port 4444"));
+  httpServer.listen({ port: PORT }, () =>
+    console.log(`The server is live on port ${PORT}`)
+  );
 }
 startServer();
